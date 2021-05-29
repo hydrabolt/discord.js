@@ -1969,20 +1969,37 @@ export const Constants: {
       Asset: (name: string) => string;
       DefaultAvatar: (id: Snowflake | number) => string;
       Emoji: (emojiId: Snowflake, format: 'png' | 'gif') => string;
-      Avatar: (
+      Avatar: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      GuildMemberAvatar: (
+        guildId: Snowflake | number,
         userId: Snowflake | number,
         hash: string,
-        format: 'default' | AllowedImageFormat,
-        size: number,
+        format: AllowedImageFormat,
+        size: AllowedImageSize,
       ) => string;
-      Banner: (guildId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      Icon: (userId: Snowflake | number, hash: string, format: 'default' | AllowedImageFormat, size: number) => string;
-      AppIcon: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      AppAsset: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      GDMIcon: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      Splash: (guildId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      DiscoverySplash: (guildId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
-      TeamIcon: (teamId: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
+      Banner: (guildId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      Icon: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      AppIcon: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      AppAsset: (
+        userId: Snowflake | number,
+        hash: string,
+        format: AllowedImageFormat,
+        size: AllowedImageSize,
+      ) => string;
+      GDMIcon: (userId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      Splash: (guildId: Snowflake | number, hash: string, format: AllowedImageFormat, size: AllowedImageSize) => string;
+      DiscoverySplash: (
+        guildId: Snowflake | number,
+        hash: string,
+        format: AllowedImageFormat,
+        size: AllowedImageSize,
+      ) => string;
+      TeamIcon: (
+        teamId: Snowflake | number,
+        hash: string,
+        format: AllowedImageFormat,
+        size: AllowedImageSize,
+      ) => string;
     };
   };
   WSCodes: {
@@ -2492,6 +2509,8 @@ export interface AddGuildMemberOptions {
 }
 
 export type AllowedImageFormat = 'webp' | 'png' | 'jpg' | 'jpeg' | 'gif';
+
+export type AllowedImageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 
 export type AllowedPartial = User | Channel | GuildMember | Message | MessageReaction;
 
