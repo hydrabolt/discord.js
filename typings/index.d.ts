@@ -628,13 +628,21 @@ declare module 'discord.js' {
           hash: string,
           format: 'default' | AllowedImageFormat,
           size: number,
+          dynamic: boolean,
         ) => string;
-        Banner: (guildID: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
+        Banner: (
+          id: Snowflake | number,
+          hash: string,
+          format: AllowedImageFormat,
+          size: number,
+          dynamic: boolean,
+        ) => string;
         Icon: (
           userID: Snowflake | number,
           hash: string,
           format: 'default' | AllowedImageFormat,
           size: number,
+          dynamic: boolean,
         ) => string;
         AppIcon: (userID: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
         AppAsset: (userID: Snowflake | number, hash: string, format: AllowedImageFormat, size: number) => string;
@@ -2003,6 +2011,7 @@ declare module 'discord.js' {
   export class User extends PartialTextBasedChannel(Base) {
     constructor(client: Client, data: unknown);
     public avatar: string | null;
+    public banner: string | null;
     public bot: boolean;
     public readonly createdAt: Date;
     public readonly createdTimestamp: number;
@@ -2018,6 +2027,7 @@ declare module 'discord.js' {
     public readonly tag: string;
     public username: string;
     public avatarURL(options?: ImageURLOptions): string | null;
+    public bannerURL(options?: ImageURLOptions): string | null;
     public createDM(): Promise<DMChannel>;
     public deleteDM(): Promise<DMChannel>;
     public displayAvatarURL(options?: ImageURLOptions): string;
