@@ -926,7 +926,8 @@ export class LimitedCollection<K, V> extends Collection<K, V> {
 
 export class Message extends Base {
   public constructor(client: Client, data: unknown, channel: TextChannel | DMChannel | NewsChannel | ThreadChannel);
-  private patch(data: unknown): Message;
+  private _patch(data: unknown, partial?: boolean): Message;
+  private _update(data: unknown, partial?: boolean): Message;
 
   public activity: MessageActivity | null;
   public applicationId: Snowflake | null;

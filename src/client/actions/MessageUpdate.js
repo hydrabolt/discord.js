@@ -9,7 +9,7 @@ class MessageUpdateAction extends Action {
       const { id, channel_id, guild_id, author, timestamp, type } = data;
       const message = this.getMessage({ id, channel_id, guild_id, author, timestamp, type }, channel);
       if (message) {
-        const old = message.patch(data);
+        const old = message._update(data, true);
         return {
           old,
           updated: message,
