@@ -147,7 +147,8 @@ class Message extends Base {
      * A collection of attachments in the message - e.g. Pictures - mapped by their ids
      * @type {Collection<Snowflake, MessageAttachment>}
      */
-    this.attachments = partial && this.attachments ? new Collection(this.attachments) : new Collection();
+    this.attachments =
+      partial && !data.attachments && this.attachments ? new Collection(this.attachments) : new Collection();
     if (data.attachments) {
       for (const attachment of data.attachments) {
         this.attachments.set(attachment.id, new MessageAttachment(attachment.url, attachment.filename, attachment));
@@ -259,7 +260,7 @@ class Message extends Base {
      * Flags that are applied to the message
      * @type {Readonly<MessageFlags>}
      */
-    this.flags = new MessageFlags(partial ? data.flags ?? 0 : data.flags).freeze();
+    this.flags = new MessageFlags(partial ? data.flags ?? this.flags : data.flags).freeze();
 
     /**
      * Reference data sent in a message that contains ids identifying the referenced message
