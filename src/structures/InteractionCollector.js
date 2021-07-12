@@ -14,7 +14,7 @@ const { InteractionTypes, MessageComponentTypes } = require('../util/Constants')
  * @property {number} [max] The maximum total amount of interactions to collect
  * @property {number} [maxComponents] The maximum number of components to collect
  * @property {number} [maxUsers] The maximum number of users to interact
- * @property {Message} [message] The message to listen to interactions from
+ * @property {Message|APIMessage} [message] The message to listen to interactions from
  */
 
 /**
@@ -33,21 +33,28 @@ class InteractionCollector extends Collector {
 
     /**
      * The message from which to collect interactions, if provided
-     * @type {?Message}
+     * @type {?Snowflake}
      */
-    this.message = options.message ?? null;
+    this.messageId = options.message?.id;
 
     /**
      * The channel from which to collect interactions, if provided
-     * @type {?(TextChannel|DMChannel|NewsChannel)}
+     * @type {?Snowflake}
      */
-    this.channel = this.message?.channel ?? options.channel ?? null;
+    this.channelId =
+      this.client.channels.resolveId(options.message?.channel) ??
+      options.message?.channel_id ??
+      this.client.channels.resolveId(options.channel);
 
     /**
      * The guild from which to collect interactions, if provided
-     * @type {?Guild}
+     * @type {?Snowflake}
      */
-    this.guild = this.channel?.guild ?? options.guild ?? null;
+    this.guildId =
+      this.client.guilds.resolveId(options.message?.guild) ??
+      options.message?.guild_id ??
+      this.client.guilds.resolveId(options.channel?.guild) ??
+      this.client.guilds.resolveId(options.guild);
 
     /**
      * The the type of interaction to collect
@@ -82,17 +89,17 @@ class InteractionCollector extends Collector {
     this.empty = this.empty.bind(this);
     this.client.incrementMaxListeners();
 
-    if (this.message) {
+    if (this.messageId) {
       this._handleMessageDeletion = this._handleMessageDeletion.bind(this);
       this.client.on(Events.MESSAGE_DELETE, this._handleMessageDeletion);
     }
 
-    if (this.channel) {
+    if (this.channelId) {
       this._handleChannelDeletion = this._handleChannelDeletion.bind(this);
       this.client.on(Events.CHANNEL_DELETE, this._handleChannelDeletion);
     }
 
-    if (this.guild) {
+    if (this.guildId) {
       this._handleGuildDeletion = this._handleGuildDeletion.bind(this);
       this.client.on(Events.GUILD_DELETE, this._handleGuildDeletion);
     }
@@ -127,9 +134,9 @@ class InteractionCollector extends Collector {
      */
     if (this.interactionType && interaction.type !== this.interactionType) return null;
     if (this.componentType && interaction.componentType !== this.componentType) return null;
-    if (this.message && interaction.message?.id !== this.message.id) return null;
-    if (this.channel && interaction.channelId !== this.channel.id) return null;
-    if (this.guild && interaction.guildId !== this.guild.id) return null;
+    if (this.messageId && interaction.message?.id !== this.messageId) return null;
+    if (this.channelId && interaction.channelId !== this.channelId) return null;
+    if (this.guildId && interaction.guildId !== this.guildId) return null;
 
     return interaction.id;
   }
@@ -147,9 +154,9 @@ class InteractionCollector extends Collector {
      */
     if (this.type && interaction.type !== this.type) return null;
     if (this.componentType && interaction.componentType !== this.componentType) return null;
-    if (this.message && interaction.message?.id !== this.message.id) return null;
-    if (this.channel && interaction.channelId !== this.channel.id) return null;
-    if (this.guild && interaction.guildId !== this.guild.id) return null;
+    if (this.messageId && interaction.message?.id !== this.messageId) return null;
+    if (this.channelId && interaction.channelId !== this.channelId) return null;
+    if (this.guildId && interaction.guildId !== this.guildId) return null;
 
     return interaction.id;
   }
@@ -183,7 +190,7 @@ class InteractionCollector extends Collector {
    * @returns {void}
    */
   _handleMessageDeletion(message) {
-    if (message.id === this.message?.id) {
+    if (message.id === this.messageId) {
       this.stop('messageDelete');
     }
   }
@@ -195,7 +202,7 @@ class InteractionCollector extends Collector {
    * @returns {void}
    */
   _handleChannelDeletion(channel) {
-    if (channel.id === this.channel?.id) {
+    if (channel.id === this.channelId) {
       this.stop('channelDelete');
     }
   }
@@ -207,7 +214,7 @@ class InteractionCollector extends Collector {
    * @returns {void}
    */
   _handleGuildDeletion(guild) {
-    if (guild.id === this.guild?.id) {
+    if (guild.id === this.guildId) {
       this.stop('guildDelete');
     }
   }
