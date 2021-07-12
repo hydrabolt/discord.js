@@ -278,23 +278,25 @@ export class Channel extends Base {
   public toString(): ChannelMention;
 }
 
-export class Client extends BaseClient {
+type If<T extends boolean, A, B = null> = T extends true ? A : T extends false ? B : A | B;
+
+export class Client<Ready extends boolean = boolean> extends BaseClient {
   public constructor(options: ClientOptions);
   private actions: unknown;
   private _eval(script: string): unknown;
   private _validateOptions(options: ClientOptions): void;
 
-  public application: ClientApplication | null;
+  public application: If<Ready, ClientApplication>;
   public channels: ChannelManager;
   public readonly emojis: BaseGuildEmojiManager;
   public guilds: GuildManager;
   public options: ClientOptions;
-  public readyAt: Date | null;
-  public readonly readyTimestamp: number | null;
+  public readyAt: If<Ready, Date>;
+  public readonly readyTimestamp: If<Ready, number>;
   public shard: ShardClientUtil | null;
-  public token: string | null;
-  public readonly uptime: number | null;
-  public user: ClientUser | null;
+  public token: If<Ready, string, string | null>;
+  public uptime: If<Ready, number>;
+  public user: If<Ready, ClientUser>;
   public users: UserManager;
   public voice: ClientVoiceManager;
   public ws: WebSocketManager;
@@ -307,6 +309,7 @@ export class Client extends BaseClient {
   public fetchWidget(guild: GuildResolvable): Promise<Widget>;
   public generateInvite(options?: InviteGenerationOptions): string;
   public login(token?: string): Promise<string>;
+  public isReady(): this is Client<true>;
   public sweepMessages(lifetime?: number): number;
   public toJSON(): unknown;
 
@@ -2818,7 +2821,7 @@ export interface ClientEvents {
   presenceUpdate: [oldPresence: Presence | null, newPresence: Presence];
   rateLimit: [rateLimitData: RateLimitData];
   invalidRequestWarning: [invalidRequestWarningData: InvalidRequestWarningData];
-  ready: [];
+  ready: [client: Client<true>];
   invalidated: [];
   roleCreate: [role: Role];
   roleDelete: [role: Role];
