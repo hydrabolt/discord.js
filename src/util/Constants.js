@@ -59,6 +59,8 @@ exports.Endpoints = {
         makeImageUrl(`${root}/app-icons/${clientId}/${hash}`, { size, format }),
       AppAsset: (clientId, hash, { format = 'webp', size } = {}) =>
         makeImageUrl(`${root}/app-assets/${clientId}/${hash}`, { size, format }),
+      StickerPackBanner: (bannerId, format = 'webp', size) =>
+        makeImageUrl(`${root}/app-assets/710982414301790216/store/${bannerId}`, { size, format }),
       GDMIcon: (channelId, hash, format = 'webp', size) =>
         makeImageUrl(`${root}/channel-icons/${channelId}/${hash}`, { size, format }),
       Splash: (guildId, hash, format = 'webp', size) =>
@@ -67,6 +69,8 @@ exports.Endpoints = {
         makeImageUrl(`${root}/discovery-splashes/${guildId}/${hash}`, { size, format }),
       TeamIcon: (teamId, hash, { format = 'webp', size } = {}) =>
         makeImageUrl(`${root}/team-icons/${teamId}/${hash}`, { size, format }),
+      Sticker: (stickerId, stickerFormat) =>
+        `${root}/stickers/${stickerId}.${stickerFormat === 'LOTTIE' ? 'json' : 'png'}`,
     };
   },
   invite: (root, code) => `${root}/${code}`,
@@ -178,6 +182,9 @@ exports.Events = {
   STAGE_INSTANCE_CREATE: 'stageInstanceCreate',
   STAGE_INSTANCE_UPDATE: 'stageInstanceUpdate',
   STAGE_INSTANCE_DELETE: 'stageInstanceDelete',
+  GUILD_STICKER_CREATE: 'stickerCreate',
+  GUILD_STICKER_DELETE: 'stickerDelete',
+  GUILD_STICKER_UPDATE: 'stickerUpdate',
 };
 
 exports.ShardEvents = {
@@ -253,6 +260,7 @@ exports.PartialTypes = keyMirror(['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 
  * * STAGE_INSTANCE_CREATE
  * * STAGE_INSTANCE_UPDATE
  * * STAGE_INSTANCE_DELETE
+ * * GUILD_STICKERS_UPDATE
  * @typedef {string} WSEventType
  */
 exports.WSEvents = keyMirror([
@@ -305,6 +313,7 @@ exports.WSEvents = keyMirror([
   'STAGE_INSTANCE_CREATE',
   'STAGE_INSTANCE_UPDATE',
   'STAGE_INSTANCE_DELETE',
+  'GUILD_STICKERS_UPDATE',
 ]);
 
 /**
@@ -765,6 +774,8 @@ exports.APIErrors = {
   INVALID_FORM_BODY: 50035,
   INVITE_ACCEPTED_TO_GUILD_NOT_CONTAINING_BOT: 50036,
   INVALID_API_VERSION: 50041,
+  FILE_UPLOADED_EXCEEDS_MAXIMUM_SIZE: 50045,
+  INVALID_FILE_UPLOADED: 50046,
   CANNOT_SELF_REDEEM_GIFT: 50054,
   PAYMENT_SOURCE_REQUIRED: 50070,
   CANNOT_DELETE_COMMUNITY_REQUIRED_CHANNEL: 50074,
@@ -780,7 +791,9 @@ exports.APIErrors = {
   MESSAGE_ALREADY_HAS_THREAD: 160004,
   THREAD_LOCKED: 160005,
   MAXIMUM_ACTIVE_THREADS: 160006,
-  MAXIMUM_ACTIVE_ANNOUCEMENT_THREAD: 160007,
+  MAXIMUM_ACTIVE_ANNOUNCEMENT_THREADS: 160007,
+  INVALID_JSON_FOR_UPLOADED_LOTTIE_FILE: 170001,
+  LOTTIE_ANIMATION_MAXIMUM_DIMENSIONS_EXCEEDED: 170005,
 };
 
 /**
@@ -809,6 +822,14 @@ exports.WebhookTypes = createEnum([null, 'Incoming', 'Channel Follower']);
 
 /**
  * The value set for a sticker's type:
+ * * STANDARD
+ * * GUILD
+ * @typedef {string} StickerFormatType
+ */
+exports.StickerTypes = createEnum([null, 'STANDARD', 'GUILD']);
+
+/**
+ * The value set for a sticker's format type:
  * * PNG
  * * APNG
  * * LOTTIE

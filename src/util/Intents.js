@@ -28,7 +28,7 @@ class Intents extends BitField {}
  * * `GUILDS`
  * * `GUILD_MEMBERS`
  * * `GUILD_BANS`
- * * `GUILD_EMOJIS`
+ * * `GUILD_EMOJIS_AND_STICKERS`
  * * `GUILD_INTEGRATIONS`
  * * `GUILD_WEBHOOKS`
  * * `GUILD_INVITES`
@@ -47,7 +47,7 @@ Intents.FLAGS = {
   GUILDS: 1 << 0,
   GUILD_MEMBERS: 1 << 1,
   GUILD_BANS: 1 << 2,
-  GUILD_EMOJIS: 1 << 3,
+  GUILD_EMOJIS_AND_STICKERS: 1 << 3,
   GUILD_INTEGRATIONS: 1 << 4,
   GUILD_WEBHOOKS: 1 << 5,
   GUILD_INVITES: 1 << 6,

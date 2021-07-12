@@ -191,6 +191,7 @@ class MessagePayload {
       flags,
       message_reference,
       attachments: this.options.attachments,
+      sticker_ids: this.options.stickers?.map(sticker => sticker.id ?? sticker),
     };
     return this;
   }

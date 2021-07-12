@@ -14,6 +14,8 @@ const ClientPresence = require('../structures/ClientPresence');
 const GuildPreview = require('../structures/GuildPreview');
 const GuildTemplate = require('../structures/GuildTemplate');
 const Invite = require('../structures/Invite');
+const Sticker = require('../structures/Sticker');
+const StickerPack = require('../structures/StickerPack');
 const VoiceRegion = require('../structures/VoiceRegion');
 const Webhook = require('../structures/Webhook');
 const Widget = require('../structures/Widget');
@@ -302,6 +304,33 @@ class Client extends BaseClient {
       for (const region of res) regions.set(region.id, new VoiceRegion(region));
       return regions;
     });
+  }
+
+  /**
+   * Obtains a sticker from Discord.
+   * @param {Snowflake} id The sticker's id
+   * @returns {Promise<Sticker>}
+   * @example
+   * client.fetchSticker('id')
+   *   .then(sticker => console.log(`Obtained sticker with name: ${sticker.name}`))
+   *   .catch(console.error);
+   */
+  async fetchSticker(id) {
+    const data = await this.api.stickers(id).get();
+    return new Sticker(this, data);
+  }
+
+  /**
+   * Obtains the list of sticker packs available to Nitro subscribers from Discord.
+   * @returns {Promise<Collection<Snowflake, StickerPack>>}
+   * @example
+   * client.fetchPremiumStickerPacks()
+   *   .then(packs => console.log(`Available sticker packs are: ${packs.map(pack => pack.name).join(', ')}`))
+   *   .catch(console.error);
+   */
+  async fetchPremiumStickerPacks() {
+    const data = await this.api('sticker-packs').get();
+    return new Collection(data.sticker_packs.map(p => [p.id, new StickerPack(this, p)]));
   }
 
   /**

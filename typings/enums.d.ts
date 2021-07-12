@@ -126,6 +126,11 @@ export enum StickerFormatTypes {
   LOTTIE = 3,
 }
 
+export enum StickerTypes {
+  STANDARD = 1,
+  GUILD = 2,
+}
+
 export enum VerificationLevels {
   NONE = 0,
   LOW = 1,
@@ -204,6 +209,9 @@ export const enum ConstantsEvents {
   STAGE_INSTANCE_CREATE = 'stageInstanceCreate',
   STAGE_INSTANCE_UPDATE = 'stageInstanceUpdate',
   STAGE_INSTANCE_DELETE = 'stageInstanceDelete',
+  GUILD_STICKER_CREATE = 'stickerCreate',
+  GUILD_STICKER_DELETE = 'stickerDelete',
+  GUILD_STICKER_UPDATE = 'stickerUpdate',
 }
 
 export const enum ConstantsShardEvents {

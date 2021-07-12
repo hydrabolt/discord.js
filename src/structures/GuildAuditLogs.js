@@ -2,6 +2,7 @@
 
 const Integration = require('./Integration');
 const StageInstance = require('./StageInstance');
+const Sticker = require('./Sticker');
 const Webhook = require('./Webhook');
 const Collection = require('../util/Collection');
 const { OverwriteTypes, PartialTypes } = require('../util/Constants');
@@ -21,6 +22,7 @@ const Util = require('../util/Util');
  * * MESSAGE
  * * INTEGRATION
  * * STAGE_INSTANCE
+ * * STICKER
  * @typedef {string} AuditLogTargetType
  */
 
@@ -41,6 +43,7 @@ const Targets = {
   MESSAGE: 'MESSAGE',
   INTEGRATION: 'INTEGRATION',
   STAGE_INSTANCE: 'STAGE_INSTANCE',
+  STICKER: 'STICKER',
   UNKNOWN: 'UNKNOWN',
 };
 
@@ -85,6 +88,9 @@ const Targets = {
  * * STAGE_INSTANCE_CREATE: 83
  * * STAGE_INSTANCE_UPDATE: 84
  * * STAGE_INSTANCE_DELETE: 85
+ * * STICKER_CREATE: 90
+ * * STICKER_UPDATE: 91
+ * * STICKER_DELETE: 92
  * @typedef {?(number|string)} AuditLogAction
  */
 
@@ -133,6 +139,9 @@ const Actions = {
   STAGE_INSTANCE_CREATE: 83,
   STAGE_INSTANCE_UPDATE: 84,
   STAGE_INSTANCE_DELETE: 85,
+  STICKER_CREATE: 90,
+  STICKER_UPDATE: 91,
+  STICKER_DELETE: 92,
 };
 
 /**
@@ -197,9 +206,10 @@ class GuildAuditLogs {
    * * A message
    * * An integration
    * * A stage instance
+   * * A sticker
    * * An object with an id key if target was deleted
    * * An object where the keys represent either the new value or the old value
-   * @typedef {?(Object|Guild|Channel|User|Role|Invite|Webhook|GuildEmoji|Message|Integration|StageInstance)}
+   * @typedef {?(Object|Guild|Channel|User|Role|Invite|Webhook|GuildEmoji|Message|Integration|StageInstance|Sticker)}
    * AuditLogEntryTarget
    */
 
@@ -219,6 +229,7 @@ class GuildAuditLogs {
     if (target < 80) return Targets.MESSAGE;
     if (target < 83) return Targets.INTEGRATION;
     if (target < 86) return Targets.STAGE_INSTANCE;
+    if (target < 100) return Targets.STICKER;
     return Targets.UNKNOWN;
   }
 
@@ -250,6 +261,7 @@ class GuildAuditLogs {
         Actions.MESSAGE_PIN,
         Actions.INTEGRATION_CREATE,
         Actions.STAGE_INSTANCE_CREATE,
+        Actions.STICKER_CREATE,
       ].includes(action)
     ) {
       return 'CREATE';
@@ -272,6 +284,7 @@ class GuildAuditLogs {
         Actions.MESSAGE_UNPIN,
         Actions.INTEGRATION_DELETE,
         Actions.STAGE_INSTANCE_DELETE,
+        Actions.STICKER_DELETE,
       ].includes(action)
     ) {
       return 'DELETE';
@@ -291,6 +304,7 @@ class GuildAuditLogs {
         Actions.EMOJI_UPDATE,
         Actions.INTEGRATION_UPDATE,
         Actions.STAGE_INSTANCE_UPDATE,
+        Actions.STICKER_UPDATE,
       ].includes(action)
     ) {
       return 'UPDATE';
@@ -531,6 +545,19 @@ class GuildAuditLogsEntry {
               channel_id: data.options?.channel_id,
               guild_id: guild.id,
             },
+          ),
+        );
+    } else if (targetType === Targets.STICKER) {
+      this.target =
+        guild.stickers.cache.get(data.target_id) ??
+        new Sticker(
+          guild.client,
+          this.changes.reduce(
+            (o, c) => {
+              o[c.key] = c.new ?? c.old;
+              return o;
+            },
+            { id: data.target_id },
           ),
         );
     } else if (data.target_id) {

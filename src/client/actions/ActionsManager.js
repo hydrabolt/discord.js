@@ -47,6 +47,10 @@ class ActionsManager {
     this.register(require('./StageInstanceCreate'));
     this.register(require('./StageInstanceUpdate'));
     this.register(require('./StageInstanceDelete'));
+    this.register(require('./GuildStickerCreate'));
+    this.register(require('./GuildStickerDelete'));
+    this.register(require('./GuildStickerUpdate'));
+    this.register(require('./GuildStickersUpdate'));
   }
 
   register(Action) {

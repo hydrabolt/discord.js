@@ -43,8 +43,16 @@ class APIRequest {
     let body;
     if (this.options.files && this.options.files.length) {
       body = new FormData();
-      for (const file of this.options.files) if (file && file.file) body.append(file.name, file.file, file.name);
-      if (typeof this.options.data !== 'undefined') body.append('payload_json', JSON.stringify(this.options.data));
+      for (const file of this.options.files) {
+        if (file && file.file) body.append(file.key ?? file.name, file.file, file.name);
+      }
+      if (typeof this.options.data !== 'undefined') {
+        if (this.options.dontUsePayloadJSON) {
+          for (const [key, value] of Object.entries(this.options.data)) body.append(key, value);
+        } else {
+          body.append('payload_json', JSON.stringify(this.options.data));
+        }
+      }
       headers = Object.assign(headers, body.getHeaders());
       // eslint-disable-next-line eqeqeq
     } else if (this.options.data != null) {

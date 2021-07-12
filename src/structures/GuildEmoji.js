@@ -59,7 +59,7 @@ class GuildEmoji extends BaseGuildEmoji {
    */
   get deletable() {
     if (!this.guild.me) throw new Error('GUILD_UNCACHED_ME');
-    return !this.managed && this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS);
+    return !this.managed && this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS);
   }
 
   /**
@@ -80,8 +80,8 @@ class GuildEmoji extends BaseGuildEmoji {
       throw new Error('EMOJI_MANAGED');
     } else {
       if (!this.guild.me) throw new Error('GUILD_UNCACHED_ME');
-      if (!this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS)) {
-        throw new Error('MISSING_MANAGE_EMOJIS_PERMISSION', this.guild);
+      if (!this.guild.me.permissions.has(Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS)) {
+        throw new Error('MISSING_MANAGE_EMOJIS_AND_STICKERS_PERMISSION', this.guild);
       }
     }
     const data = await this.client.api.guilds(this.guild.id).emojis(this.id).get();

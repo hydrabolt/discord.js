@@ -87,7 +87,7 @@ class Permissions extends BitField {
  * * `MANAGE_NICKNAMES` (change other members' nicknames)
  * * `MANAGE_ROLES`
  * * `MANAGE_WEBHOOKS`
- * * `MANAGE_EMOJIS`
+ * * `MANAGE_EMOJIS_AND_STICKERS`
  * * `USE_APPLICATION_COMMANDS`
  * * `REQUEST_TO_SPEAK`
  * * `MANAGE_THREADS`
@@ -127,7 +127,7 @@ Permissions.FLAGS = {
   MANAGE_NICKNAMES: 1n << 27n,
   MANAGE_ROLES: 1n << 28n,
   MANAGE_WEBHOOKS: 1n << 29n,
-  MANAGE_EMOJIS: 1n << 30n,
+  MANAGE_EMOJIS_AND_STICKERS: 1n << 30n,
   USE_APPLICATION_COMMANDS: 1n << 31n,
   REQUEST_TO_SPEAK: 1n << 32n,
   MANAGE_THREADS: 1n << 34n,
