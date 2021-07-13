@@ -93,12 +93,16 @@
 class Options extends null {
   /**
    * The default client options.
+   * @param {Client} [client] The client creating these options
    * @returns {ClientOptions}
    */
-  static createDefault() {
+  static createDefault(client) {
     return {
       shardCount: 1,
-      makeCache: this.cacheWithLimits({ MessageManager: 200 }),
+      makeCache: this.cacheWithLimitsOrSweep({
+        MessageManager: 200,
+        ThreadManager: { sweepArchivedOnly: true, client },
+      }),
       messageCacheLifetime: 0,
       messageSweepInterval: 0,
       invalidRequestWarningInterval: 0,
@@ -146,6 +150,53 @@ class Options extends null {
         return new Collection();
       }
       return new LimitedCollection(limit);
+    };
+  }
+
+  /**
+   * Create a cache factory using predefined sweep settings.
+   * @param {Record<string, SweptCollectionOptions>} [settings={}] Settings for structures.
+   * @returns {CacheFactory}
+   */
+  static cacheWithSweep(settings = {}) {
+    const Collection = require('./Collection');
+    const SweptCollection = require('./SweptCollection');
+
+    return manager => {
+      const setting = settings[manager.name];
+      if (
+        setting === null || setting === undefined || typeof setting !== 'object' || setting.sweepInterval
+          ? setting.sweepInterval <= 0 || setting.sweepInterval === Infinity
+          : true
+      ) {
+        return new Collection();
+      }
+      return new SweptCollection(setting);
+    };
+  }
+
+  /**
+   * Create a cache factory using predefined sweep settings or limits.
+   * @param {Record<string, SweptCollectionOptions|number>} [settings={}] Settings or Limits for structures.
+   * @returns {CacheFactory}
+   */
+  static cacheWithLimitsOrSweep(settings = {}) {
+    const Collection = require('./Collection');
+    const LimitedCollection = require('./LimitedCollection');
+    const SweptCollection = require('./SweptCollection');
+
+    return manager => {
+      const setting = settings[manager.name];
+      if (typeof setting === 'number' && setting !== Infinity) return LimitedCollection(setting);
+      if (
+        setting === null ||
+        setting === undefined ||
+        typeof setting !== 'object' ||
+        (setting.sweepInterval ? setting.sweepInterval <= 0 || setting.sweepInterval === Infinity : true)
+      ) {
+        return new Collection();
+      }
+      return new SweptCollection(setting);
     };
   }
 

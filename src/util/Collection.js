@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseCollection = require('@discordjs/collection');
+const BaseCollection = require('@discordjs/collection').Collection;
 const Util = require('./Util');
 
 class Collection extends BaseCollection {
