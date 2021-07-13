@@ -36,7 +36,7 @@ class Client extends BaseClient {
     super(Object.assign({ _tokenType: 'Bot' }, options));
 
     const data = require('worker_threads').workerData ?? process.env;
-    const defaults = Options.createDefault();
+    const defaults = Options.createDefault(this);
 
     if (this.options.shards === defaults.shards) {
       if ('SHARDS' in data) {

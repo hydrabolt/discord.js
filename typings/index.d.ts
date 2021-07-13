@@ -362,8 +362,20 @@ export class ClientUser extends User {
 
 export class Options extends null {
   private constructor();
-  public static createDefaultOptions(): ClientOptions;
+  public static createDefaultOptions(client?: Client): ClientOptions;
   public static cacheWithLimits(limits?: Record<string, number>): CacheFactory;
+  public static cacheWithLimitsOrSweep(
+    settings?: Record<
+      string,
+      SweptCollectionOptions<unknown, unknown> | SweptCollectionFunctionOptions<unknown, unknown> | number
+    >,
+  ): CacheFactory;
+  public static cacheWithSweep(
+    settings?: Record<
+      string,
+      SweptCollectionOptions<unknown, unknown> | SweptCollectionFunctionOptions<unknown, unknown>
+    >,
+  ): CacheFactory;
   public static cacheEverything(): CacheFactory;
 }
 
@@ -1531,6 +1543,15 @@ export class StoreChannel extends GuildChannel {
   public constructor(guild: Guild, data?: unknown, client?: Client);
   public nsfw: boolean;
   public type: 'GUILD_STORE';
+}
+
+export class SweptCollection<K, V> extends Collection<K, V> {
+  public constructor(options: SweptCollectionOptions<K, V> | SweptCollectionFunctionOptions<K, V>);
+  public constructor(iterable?: Iterable<readonly [K, V]>);
+  public client: Client | null;
+  public maxSize: number;
+  public maxSizePredicate: ((value: V) => boolean) | null;
+  public interval: number | null;
 }
 
 export class SystemChannelFlags extends BitField<SystemChannelFlagsString> {
@@ -3970,6 +3991,24 @@ export interface TypingData {
 export interface StageInstanceEditOptions {
   topic?: string;
   privacyLevel?: PrivacyLevel | number;
+}
+
+export interface SweptCollectionBaseOptions<K, V> {
+  client?: Client;
+  iterable?: Iterable<readonly [K, V]>;
+  maxSize?: number;
+  maxSizePredicate?: (value: V) => boolean;
+  sweepInterval?: number;
+}
+
+export interface SweptCollectionFunctionOptions<K, V> extends SweptCollectionBaseOptions<K, V> {
+  sweepFunction: (value: V, key: K, collection: this) => boolean;
+}
+
+export interface SweptCollectionOptions<K, V> extends SweptCollectionBaseOptions<K, V> {
+  sweepArchivedOnly?: boolean;
+  sweepLifetime?: number;
+  sweepLifetimeProperty?: string;
 }
 
 export type TextBasedChannelTypes =
