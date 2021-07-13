@@ -22,7 +22,7 @@
  * @typedef {Function} CacheFactory
  * @param {Function} manager The manager class the cache is being requested from.
  * @param {Function} holds The class that the cache will hold.
- * @returns {Collection} Cache instance that follows collection interface.
+ * @returns {Collection} A Collection used to store the cache of the manager.
  */
 
 /**
@@ -34,8 +34,7 @@
  * @property {number} [shardCount=1] The total amount of shards used by all processes of this bot
  * (e.g. recommended shard count, shard count of the ShardingManager)
  * @property {CacheFactory} [makeCache] Function to create a cache.
- * (-1 or Infinity for unlimited - don't do this without message sweeping, otherwise memory usage will climb
- * indefinitely)
+ * You can use your own function, or the {@link Options} class to customize the Collection used for the cache.
  * @property {number} [messageCacheLifetime=0] How long a message should stay in the cache until it is considered
  * sweepable (in seconds, 0 for forever)
  * @property {number} [messageSweepInterval=0] How frequently to remove messages from the cache that are older than

@@ -363,7 +363,7 @@ export class ClientUser extends User {
 export class Options extends null {
   private constructor();
   public static createDefaultOptions(): ClientOptions;
-  public static cacheWithLimits(limits?: Record<string, number>): CacheFactory;
+  public static cacheWithLimits(limits?: CacheWithLimitOptions): CacheFactory;
   public static cacheEverything(): CacheFactory;
 }
 
@@ -2725,7 +2725,54 @@ export type BitFieldResolvable<T extends string, N extends number | bigint> =
 
 export type BufferResolvable = Buffer | string;
 
-export type CacheFactory = <T>(manager: { name: string }, holds: { name: string }) => Collection<Snowflake, T>;
+export type CachedManagerTypes =
+  | 'ApplicationCommandManager'
+  | 'BaseGuildEmojiManager'
+  | 'ChannelManager'
+  | 'GuildChannelManager'
+  | 'GuildManager'
+  | 'GuildMemberManager'
+  | 'GuildBanManager'
+  | 'MessageManager'
+  | 'PermissionOverwriteManager'
+  | 'PresenceManager'
+  | 'ReactionManager'
+  | 'ReactionUserManager'
+  | 'RoleManager'
+  | 'StageInstanceManager'
+  | 'ThreadManager'
+  | 'ThreadMemberManager'
+  | 'UserManager'
+  | 'VoiceStateManager';
+
+export type CacheFactory = <T extends keyof CacheFactoryArgs>(
+  ...args: CacheFactoryArgs[T]
+) => Collection<Snowflake, CacheFactoryArgs[T][1]>;
+
+export interface CacheFactoryArgs {
+  ApplicationCommandManager: [manager: typeof ApplicationCommandManager, holds: typeof ApplicationCommand];
+  BaseGuildEmojiManager: [manager: typeof BaseGuildEmojiManager, holds: typeof GuildEmoji];
+  ChannelManager: [manager: typeof ChannelManager, holds: typeof Channel];
+  GuildChannelManager: [manager: typeof GuildChannelManager, holds: typeof GuildChannel];
+  GuildManager: [manager: typeof GuildManager, holds: typeof Guild];
+  GuildMemberManager: [manager: typeof GuildMemberManager, holds: typeof GuildMember];
+  GuildBanManager: [manager: typeof GuildBanManager, holds: typeof GuildBan];
+  MessageManager: [manager: typeof MessageManager, holds: typeof Message];
+  PermissionOverwriteManager: [manager: typeof PermissionOverwriteManager, holds: typeof PermissionOverwrites];
+  PresenceManager: [manager: typeof PresenceManager, holds: typeof Presence];
+  ReactionManager: [manager: typeof ReactionManager, holds: typeof MessageReaction];
+  ReactionUserManager: [manager: typeof ReactionUserManager, holds: typeof User];
+  RoleManager: [manager: typeof RoleManager, holds: typeof Role];
+  StageInstanceManager: [manager: typeof StageInstanceManager, holds: typeof StageInstance];
+  ThreadManager: [manager: typeof ThreadManager, holds: typeof ThreadChannel];
+  ThreadMemberManager: [manager: typeof ThreadMemberManager, holds: typeof ThreadMember];
+  UserManager: [manager: typeof UserManager, holds: typeof User];
+  VoiceStateManager: [manager: typeof VoiceStateManager, holds: typeof VoiceState];
+}
+
+export type CacheWithLimitOptions = {
+  [K in keyof CacheFactoryArgs]?: number;
+};
 
 export interface ChannelCreationOverwrites {
   allow?: PermissionResolvable;
