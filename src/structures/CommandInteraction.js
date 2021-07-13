@@ -1,9 +1,9 @@
 'use strict';
 
+const CommandInteractionOptionResolver = require('./CommandInteractionOptionResolver');
 const Interaction = require('./Interaction');
 const InteractionWebhook = require('./InteractionWebhook');
 const InteractionResponses = require('./interfaces/InteractionResponses');
-const Collection = require('../util/Collection');
 const { ApplicationCommandOptionTypes } = require('../util/Constants');
 
 /**
@@ -48,9 +48,11 @@ class CommandInteraction extends Interaction {
 
     /**
      * The options passed to the command.
-     * @type {Collection<string, CommandInteractionOption>}
+     * @type {CommandInteractionOptionResolver}
      */
-    this.options = this._createOptionsCollection(data.data.options, data.data.resolved);
+    this.options = new CommandInteractionOptionResolver(
+      this._createOptionsArray(data.data.options, data.data.resolved),
+    );
 
     /**
      * Whether this interaction has already been replied to
@@ -108,7 +110,7 @@ class CommandInteraction extends Interaction {
     };
 
     if ('value' in option) result.value = option.value;
-    if ('options' in option) result.options = this._createOptionsCollection(option.options, resolved);
+    if ('options' in option) result.options = this._createOptionsArray(option.options, resolved);
 
     if (resolved) {
       const user = resolved.users?.[option.value];
@@ -128,19 +130,19 @@ class CommandInteraction extends Interaction {
   }
 
   /**
-   * Creates a collection of options from the received options array.
+   * Creates an array of options from the received API options array.
    * @param {APIApplicationCommandOption[]} options The received options
    * @param {APIApplicationCommandOptionResolved} resolved The resolved interaction data
-   * @returns {Collection<string, CommandInteractionOption>}
+   * @returns {CommandInteractionOption[]}
    * @private
    */
-  _createOptionsCollection(options, resolved) {
-    const optionsCollection = new Collection();
-    if (typeof options === 'undefined') return optionsCollection;
+  _createOptionsArray(options, resolved) {
+    const optionsArray = [];
+    if (typeof options === 'undefined') return optionsArray;
     for (const option of options) {
-      optionsCollection.set(option.name, this.transformOption(option, resolved));
+      optionsArray.push(this.transformOption(option, resolved));
     }
-    return optionsCollection;
+    return optionsArray;
   }
 
   // These are here only for documentation purposes - they are implemented by InteractionResponses

@@ -416,7 +416,7 @@ export class CommandInteraction extends Interaction {
   public commandName: string;
   public deferred: boolean;
   public ephemeral: boolean | null;
-  public options: Collection<string, CommandInteractionOption>;
+  public options: CommandInteractionOptionResolver;
   public replied: boolean;
   public webhook: InteractionWebhook;
   public defer(options?: InteractionDeferOptions & { fetchReply: true }): Promise<Message | APIMessage>;
@@ -429,6 +429,56 @@ export class CommandInteraction extends Interaction {
   public reply(options: string | MessagePayload | InteractionReplyOptions): Promise<void>;
   private transformOption(option: unknown, resolved: unknown): CommandInteractionOption;
   private _createOptionsCollection(options: unknown, resolved: unknown): Collection<string, CommandInteractionOption>;
+}
+
+export class CommandInteractionOptionResolver {
+  constructor(options: CommandInteractionOption[]);
+  private options: CommandInteractionOption[];
+  private _getTypedOption(
+    name: string,
+    types: ApplicationCommandOptionType[],
+    properties: (keyof ApplicationCommandOption)[],
+    required: true,
+  ): CommandInteractionOption;
+  private _getTypedOption(
+    name: string,
+    types: ApplicationCommandOptionType[],
+    properties: (keyof ApplicationCommandOption)[],
+    required: boolean,
+  ): CommandInteractionOption | null;
+
+  public get(name: string, required: true): CommandInteractionOption;
+  public get(name: string, required?: boolean): CommandInteractionOption | null;
+  public getSubCommand(name: string): CommandInteractionOptionResolver | null;
+  public getBoolean(name: string, required: true): boolean;
+  public getBoolean(name: string, required?: boolean): boolean | null;
+  public getChannel(name: string, required: true): NonNullable<CommandInteractionOption['channel']>;
+  public getChannel(name: string, required?: boolean): NonNullable<CommandInteractionOption['channel']> | null;
+  public getString(name: string, required: true): string;
+  public getString(name: string, required?: boolean): string | null;
+  public getInteger(name: string, required: true): number;
+  public getInteger(name: string, required?: boolean): number | null;
+  public getUser(name: string, required: true): NonNullable<CommandInteractionOption['user']>;
+  public getUser(name: string, required?: boolean): NonNullable<CommandInteractionOption['user']> | null;
+  public getMember(name: string, required: true): NonNullable<CommandInteractionOption['member']>;
+  public getMember(name: string, required?: boolean): NonNullable<CommandInteractionOption['member']> | null;
+  public getRole(name: string, required: true): NonNullable<CommandInteractionOption['role']>;
+  public getRole(name: string, required?: boolean): NonNullable<CommandInteractionOption['role']> | null;
+  public getMentionable(
+    name: string,
+    required: true,
+  ):
+    | NonNullable<CommandInteractionOption['member']>
+    | NonNullable<CommandInteractionOption['role']>
+    | NonNullable<CommandInteractionOption['user']>;
+  public getMentionable(
+    name: string,
+    required?: boolean,
+  ):
+    | NonNullable<CommandInteractionOption['member']>
+    | NonNullable<CommandInteractionOption['role']>
+    | NonNullable<CommandInteractionOption['user']>
+    | null;
 }
 
 export class DataResolver extends null {
