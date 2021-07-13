@@ -419,7 +419,7 @@ export class CommandInteraction extends Interaction {
   public options: Collection<string, CommandInteractionOption>;
   public replied: boolean;
   public webhook: InteractionWebhook;
-  public defer(options?: InteractionDeferOptions & { fetchReply: true }): Promise<Message | APIMessage>;
+  public defer(options: InteractionDeferOptions & { fetchReply: true }): Promise<Message | APIMessage>;
   public defer(options?: InteractionDeferOptions): Promise<void>;
   public deleteReply(): Promise<void>;
   public editReply(options: string | MessagePayload | WebhookEditMessageOptions): Promise<Message | APIMessage>;
@@ -1069,9 +1069,9 @@ export class MessageComponentInteraction extends Interaction {
   public message: Message | APIMessage;
   public replied: boolean;
   public webhook: InteractionWebhook;
-  public defer(options?: InteractionDeferOptions & { fetchReply: true }): Promise<Message | APIMessage>;
+  public defer(options: InteractionDeferOptions & { fetchReply: true }): Promise<Message | APIMessage>;
   public defer(options?: InteractionDeferOptions): Promise<void>;
-  public deferUpdate(options?: InteractionDeferUpdateOptions & { fetchReply: true }): Promise<Message | APIMessage>;
+  public deferUpdate(options: InteractionDeferUpdateOptions & { fetchReply: true }): Promise<Message | APIMessage>;
   public deferUpdate(options?: InteractionDeferUpdateOptions): Promise<void>;
   public deleteReply(): Promise<void>;
   public editReply(options: string | MessagePayload | WebhookEditMessageOptions): Promise<Message | APIMessage>;
