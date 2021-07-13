@@ -15,6 +15,7 @@ import {
   GuildMember,
   GuildResolvable,
   Intents,
+  Interaction,
   Message,
   MessageActionRow,
   MessageAttachment,
@@ -604,3 +605,7 @@ client.on('messageReactionAdd', async reaction => {
   if (reaction.message.partial) return assertType<string | null>(reaction.message.content);
   assertType<string>(reaction.message.content);
 });
+
+// Test interactions
+declare const interaction: Interaction;
+if (interaction.inGuild()) assertType<Snowflake>(interaction.guildId);
